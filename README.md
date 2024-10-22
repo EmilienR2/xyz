@@ -1,4 +1,4 @@
-# XYZ
+# XYZ ROUX Emilien
 
 <img src="docs/screenshots/home.png" alt="Page d'accueil" />
 
