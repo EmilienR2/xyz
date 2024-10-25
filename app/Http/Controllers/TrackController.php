@@ -12,6 +12,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use App\Models\Category;
 
 class TrackController extends Controller
 {
@@ -22,7 +24,7 @@ class TrackController extends Controller
     {
         return view('app.tracks.show', [
             'week' => $week->loadCount('tracks'),
-            'track' => $track->loadCount('likes'),
+            'track' => $track->loadCount('likes')->load('category'),
             'tracks_count' => $week->tracks_count,
             'position' => $week->getTrackPosition($track),
             'liked' => $request->user()->likes()->whereTrackId($track->id)->exists(),
@@ -38,7 +40,7 @@ class TrackController extends Controller
         return view('app.tracks.create', [
             'week' => Week::current(),
             'remaining_tracks_count' => $user->remainingTracksCount(),
-            'categories' => \App\Models\Category::all(),
+            'categories' => Category::all(),
         ]);
     }
 
@@ -53,11 +55,12 @@ class TrackController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'artist' => ['required', 'string', 'max:255'],
             'url' => ['required', 'url', new PlayerUrl()],
+            'category_id' => ['required', 'exists:categories,id'],
         ]);
 
         DB::beginTransaction();
 
-        // Set track title, artist and url
+        // Set track title, artist, url and category
         $track = new Track($validated);
 
         // Set track's user + week

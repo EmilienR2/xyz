@@ -22,7 +22,6 @@ class CategoryController extends Controller
      */
     public function show(Category $category): View
     {
-        // Load related tracks if needed
         $category->load('tracks');
 
         return view('app.categories.show', compact('category'));
