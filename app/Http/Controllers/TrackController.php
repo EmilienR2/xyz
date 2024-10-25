@@ -38,6 +38,7 @@ class TrackController extends Controller
         return view('app.tracks.create', [
             'week' => Week::current(),
             'remaining_tracks_count' => $user->remainingTracksCount(),
+            'categories' => \App\Models\Category::all(),
         ]);
     }
 
